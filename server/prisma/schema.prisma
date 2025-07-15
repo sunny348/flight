@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  MODIFIED
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  password  String?
+  googleId  String?   @unique
+  name      String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  bookings  Booking[]
+}
+
+model Booking {
+  id              Int            @id @default(autoincrement())
+  userId          Int
+  totalPrice      Float
+  currency        String // Added currency field
+  status          BookingStatus  @default(CONFIRMED) // Changed to use enum, default to CONFIRMED
+  cancellationFee Float?         @map("cancellation_fee")
+  modificationFee Float?         @map("modification_fee")
+  paymentStatus   String         @default("PENDING") // Changed default, can be PENDING, COMPLETED, FAILED
+  paymentId       String? // To store Razorpay Payment ID
+  orderId         String? // To store Razorpay Order ID
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  user            User           @relation(fields: [userId], references: [id])
+  bookedFlights   BookedFlight[]
+  passengers      Passenger[]
+
+  @@index([userId])
+}
+
+model BookedFlight {
+  id          Int      @id @default(autoincrement())
+  bookingId   Int
+  booking     Booking  @relation(fields: [bookingId], references: [id])
+  flightOffer Json // Stores the Amadeus flight offer object (or our mock)
+  departureAt DateTime @map("departure_at") // Added departureAt field
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([bookingId])
+}
+
+model Passenger {
+  id           Int      @id @default(autoincrement())
+  bookingId    Int // Changed to Int
+  booking      Booking  @relation(fields: [bookingId], references: [id])
+  firstName    String
+  lastName     String
+  dateOfBirth  String // Storing as string for simplicity, consider YYYY-MM-DD format
+  travelerType String // e.g., ADULT, CHILD, INFANT
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([bookingId])
+}

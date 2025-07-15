@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE `booking` ADD COLUMN `orderId` VARCHAR(191) NULL,
+    ADD COLUMN `paymentId` VARCHAR(191) NULL,
+    MODIFY `paymentStatus` VARCHAR(191) NOT NULL DEFAULT 'PENDING';
