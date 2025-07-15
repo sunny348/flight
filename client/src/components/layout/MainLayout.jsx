@@ -81,20 +81,22 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <HoverScale>
-                <Link
-                  to="/login"
-                  className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-                  Login
-                </Link>
-              </HoverScale>
+ 
+<HoverScale>
+  <Link to="/login" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+    Login
+  </Link>
+</HoverScale>
 
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={() => navigate("/signup")}>
-                Sign Up
-              </Button>
+<HoverScale>
+  <Link to="/signup">
+    <Button variant="primary" size="sm">Sign Up</Button>
+  </Link>
+</HoverScale>
+
+
+              
+
             </>
           )}
 
