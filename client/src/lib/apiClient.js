@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api", // Use Vite env variable or fallback
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://flight-backend-rho.vercel.app", // Use Vite env variable or fallback
   withCredentials: true,
 });
 

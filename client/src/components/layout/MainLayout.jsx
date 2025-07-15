@@ -13,6 +13,8 @@ import {
 } from "../ui/Icons";
 import Button from "../ui/Button";
 
+
+
 const Navbar = () => {
   const { isAuthenticated, user, logoutUser, isLoading } = useAuth();
   const { darkMode, toggleDarkMode } = useTheme();
@@ -44,7 +46,20 @@ const Navbar = () => {
           </Link>
         </HoverScale>
 
+
         <div className="flex items-center gap-6">
+
+                 <HoverScale>
+  <Link to="/login" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+    Login
+  </Link>
+</HoverScale>
+
+     <HoverScale>
+  <Link to="/signup" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+    Sign Up
+  </Link>
+</HoverScale>
           <HoverScale>
             <Link
               to="/flights"
@@ -53,6 +68,9 @@ const Navbar = () => {
               <span>Search Flights</span>
             </Link>
           </HoverScale>
+
+
+   
 
           {isLoading ? (
             <div className="animate-pulse w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
@@ -81,7 +99,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
- 
+{/*  
 <HoverScale>
   <Link to="/login" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
     Login
@@ -89,10 +107,15 @@ const Navbar = () => {
 </HoverScale>
 
 <HoverScale>
-  <Link to="/signup">
-    <Button variant="primary" size="sm">Sign Up</Button>
-  </Link>
-</HoverScale>
+  <Button
+    variant="primary"
+    size="sm"
+    onClick={() => navigate("/signup")}
+  >
+    Sign Up
+  </Button>
+</HoverScale> */}
+
 
 
               
