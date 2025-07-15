@@ -26,8 +26,9 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav
-      className="bg-white dark:bg-secondary-900 border-b border-gray-200 dark:border-gray-800 py-4 shadow-sm"
+<motion.nav
+  className="fixed top-0 w-full z-50 bg-white dark:bg-secondary-900 border-b border-gray-200 dark:border-gray-800 py-4 shadow-sm"
+
       initial={{ y: -50, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}>
@@ -48,92 +49,75 @@ const Navbar = () => {
 
 
         <div className="flex items-center gap-6">
+  {isLoading ? (
+    <div className="animate-pulse w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
+  ) : isAuthenticated ? (
+    <>
+      {/* Authenticated: Show Flights, Bookings, User Info, Logout */}
+      <HoverScale>
+        <Link
+          to="/flights"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          <IconSearch className="w-5 h-5" />
+          <span>Search Flights</span>
+        </Link>
+      </HoverScale>
 
-                 <HoverScale>
-  <Link to="/login" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-    Login
-  </Link>
-</HoverScale>
+      <HoverScale>
+        <Link
+          to="/bookings"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          <IconTicket className="w-5 h-5" />
+          <span>My Bookings</span>
+        </Link>
+      </HoverScale>
 
-     <HoverScale>
-  <Link to="/signup" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-    Sign Up
-  </Link>
-</HoverScale>
-          <HoverScale>
-            <Link
-              to="/flights"
-              className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-              <IconSearch className="w-5 h-5" />
-              <span>Search Flights</span>
-            </Link>
-          </HoverScale>
+      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+        <IconUser className="w-5 h-5 text-primary-500" />
+        <span>{user?.name || user?.email}</span>
+      </div>
 
+      <Button
+        variant="danger"
+        size="sm"
+        onClick={handleLogout}>
+        Logout
+      </Button>
+    </>
+  ) : (
+    <>
+      {/* Guest: Show Login and Sign Up */}
+      <HoverScale>
+        <Link
+          to="/login"
+          className="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          Login
+        </Link>
+      </HoverScale>
 
-   
+      <HoverScale>
+        <Link
+          to="/signup"
+          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          Sign Up
+        </Link>
+      </HoverScale>
+    </>
+  )}
 
-          {isLoading ? (
-            <div className="animate-pulse w-20 h-8 bg-gray-200 dark:bg-gray-700 rounded"></div>
-          ) : isAuthenticated ? (
-            <>
-              <HoverScale>
-                <Link
-                  to="/bookings"
-                  className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-                  <IconTicket className="w-5 h-5" />
-                  <span>My Bookings</span>
-                </Link>
-              </HoverScale>
+  {/* Dark mode toggle */}
+  <button
+    onClick={toggleDarkMode}
+    className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+    aria-label="Toggle dark mode">
+    {darkMode ? (
+      <IconSun className="w-5 h-5" />
+    ) : (
+      <IconMoon className="w-5 h-5" />
+    )}
+  </button>
+</div>
 
-              <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
-                <IconUser className="w-5 h-5 text-primary-500" />
-                <span>{user?.name || user?.email}</span>
-              </div>
-
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={handleLogout}>
-                Logout
-              </Button>
-            </>
-          ) : (
-            <>
-{/*  
-<HoverScale>
-  <Link to="/login" className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
-    Login
-  </Link>
-</HoverScale>
-
-<HoverScale>
-  <Button
-    variant="primary"
-    size="sm"
-    onClick={() => navigate("/signup")}
-  >
-    Sign Up
-  </Button>
-</HoverScale> */}
-
-
-
-              
-
-            </>
-          )}
-
-          <button
-            onClick={toggleDarkMode}
-            className="p-2 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            aria-label="Toggle dark mode">
-            {darkMode ? (
-              <IconSun className="w-5 h-5" />
-            ) : (
-              <IconMoon className="w-5 h-5" />
-            )}
-          </button>
-        </div>
       </div>
     </motion.nav>
   );
