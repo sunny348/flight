@@ -102,12 +102,12 @@ const FlightSearchPage = () => {
         <div className="absolute inset-0 bg-primary-900 opacity-20 z-0"></div>
         <div className="relative z-10 px-6 py-16 md:py-24 text-center">
           <SlideUp>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold">
               Find Your Perfect Flight
             </h1>
           </SlideUp>
           <FadeIn delay={0.2}>
-            <p className="text-lg md:text-xl text-black/90 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
               Compare thousands of flights from trusted airlines around the
               world
             </p>
@@ -125,7 +125,7 @@ const FlightSearchPage = () => {
             <div>
               <label
                 htmlFor="origin"
-                className="block text-sm font-medium text-gray-700 dark:text-black-300 mb-1">
+                className="block text-sm font-medium text-gray-700 dark:text-black mb-1">
                 From
               </label>
               <select
@@ -294,7 +294,7 @@ const FlightSearchPage = () => {
               variant="primary"
               size="lg"
               disabled={!isSearchFormValid}
-              className= "text-black"
+              className= "text-white dark:text-white"
                           icon={<IconSearch />}>
               Search Flights
             </Button>

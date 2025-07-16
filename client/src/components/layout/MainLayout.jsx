@@ -132,21 +132,21 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
               FlightBooker
             </h3>
-            <p className="text-gray-600 dark:text-black-400 text-sm">
+            <p className= "  dark:text-white mb-4 text-black  text-sm">
               Find and book your next flight with ease. We offer a seamless
               booking experience with the best prices.
             </p>
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-black mb-4">
               Quick Links
             </h3>
             <ul className="space-y-2">
               <li>
                 <Link
                   to="/"
-                  className="text-gray-600 dark:text-black hover:text-primary-500 dark:hover:text-primary-400 text-sm">
+                  className="text-gray-300 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
                   Home
                 </Link>
               </li>
@@ -160,7 +160,7 @@ const Footer = () => {
               <li>
                 <Link
                   to="/bookings"
-                  className="text-black-600 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
+                  className="text-gray-600 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
                   My Bookings
                 </Link>
               </li>
