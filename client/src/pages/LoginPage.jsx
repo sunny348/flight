@@ -93,7 +93,7 @@ const LoginPage = () => {
             <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
               Welcome Back
             </h2>
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-gray-600 dark:text-black-00">
               Log in to your account to continue
             </p>
           </div>

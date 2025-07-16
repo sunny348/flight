@@ -57,7 +57,7 @@ const Navbar = () => {
       <HoverScale>
         <Link
           to="/flights"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          className="flex items-center gap-1.5 text-gray-700 dark:text-black-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
           <IconSearch className="w-5 h-5" />
           <span>Search Flights</span>
         </Link>
@@ -66,7 +66,7 @@ const Navbar = () => {
       <HoverScale>
         <Link
           to="/bookings"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          className="flex items-center gap-1.5 text-gray-700 dark:text-black-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
           <IconTicket className="w-5 h-5" />
           <span>My Bookings</span>
         </Link>
@@ -90,7 +90,7 @@ const Navbar = () => {
       <HoverScale>
         <Link
           to="/login"
-          className="flex items-center text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          className="flex items-center text-gray-700 dark:text-black-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
           Login
         </Link>
       </HoverScale>
@@ -98,7 +98,7 @@ const Navbar = () => {
       <HoverScale>
         <Link
           to="/signup"
-          className="flex items-center gap-1.5 text-gray-700 dark:text-gray-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
+          className="flex items-center gap-1.5 text-gray-700 dark:text-black-300 hover:text-primary-500 dark:hover:text-primary-400 transition-colors">
           Sign Up
         </Link>
       </HoverScale>
@@ -132,7 +132,7 @@ const Footer = () => {
             <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
               FlightBooker
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-black-400 text-sm">
               Find and book your next flight with ease. We offer a seamless
               booking experience with the best prices.
             </p>
@@ -146,21 +146,21 @@ const Footer = () => {
               <li>
                 <Link
                   to="/"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
+                  className="text-gray-600 dark:text-black hover:text-primary-500 dark:hover:text-primary-400 text-sm">
                   Home
                 </Link>
               </li>
               <li>
                 <Link
                   to="/flights"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
+                  className="text-gray-600 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
                   Search Flights
                 </Link>
               </li>
               <li>
                 <Link
                   to="/bookings"
-                  className="text-gray-600 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
+                  className="text-black-600 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400 text-sm">
                   My Bookings
                 </Link>
               </li>
@@ -168,10 +168,10 @@ const Footer = () => {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+            <h3 className="text-lg font-semibold text-gray-800 dark:text-black mb-4">
               Contact Us
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-600 dark:text-black-400 text-sm">
               Email: support@flightbooker.com
               <br />
               Phone: +1 (555) 123-4567
@@ -181,20 +181,20 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+        <div className="border-t border-gray-200 dark:border-black-800 mt-8 pt-6 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm text-gray-500 dark:text-black-400">
             © {new Date().getFullYear()} FlightBooker. All rights reserved.
           </p>
 
           <div className="flex gap-4 mt-4 md:mt-0">
             <a
               href="#"
-              className="text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400">
+              className="text-gray-500 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400">
               Privacy Policy
             </a>
             <a
               href="#"
-              className="text-gray-500 dark:text-gray-400 hover:text-primary-500 dark:hover:text-primary-400">
+              className="text-gray-500 dark:text-black-400 hover:text-primary-500 dark:hover:text-primary-400">
               Terms of Service
             </a>
           </div>

@@ -33,14 +33,14 @@ const HomePage = () => {
           {/* Hero Content */}
           <div className="flex-1">
             <HeroReveal>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-black leading-tight">
                 Discover the world,{" "}
                 <span className="text-primary-500">one flight</span> at a time
               </h1>
             </HeroReveal>
 
             <SlideUp delay={0.2}>
-              <p className="mt-6 text-xl text-gray-600 dark:text-gray-300">
+              <p className="mt-6 text-xl text-gray-600 dark:text-black-300">
                 Find and book your next flight with ease. We offer a seamless
                 booking experience with the best prices and exclusive deals.
               </p>
@@ -104,13 +104,13 @@ const HomePage = () => {
       {/* Features Section */}
       <StaggerContainer>
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 text-sm font-medium rounded-full mb-4">
+          <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 text-3xl font-medium rounded-full mb-4">
             Why Choose Us
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-black">
             A Better Way to Book Flights
           </h2>
-          <p className="mt-4 text-xl text-gray-600 dark:text-gray-400">
+          <p className="mt-4 text-xl text-gray-600 dark:text-black-400">
             We make finding and booking flights simple and stress-free
           </p>
         </div>
@@ -179,11 +179,11 @@ const HomePage = () => {
       <FadeIn>
         <div className="bg-gradient-to-r from-primary-500 to-primary-700 rounded-3xl shadow-xl overflow-hidden">
           <div className="p-8 md:p-12 flex flex-col md:flex-row items-center justify-between">
-            <div className="text-white mb-6 md:mb-0">
+            <div className="text-lacak mb-6 md:mb-0">
               <h2 className="text-2xl md:text-3xl font-bold">
                 Ready to start your journey?
               </h2>
-              <p className="mt-3 text-white/80">
+              <p className="mt-3 text-black/80">
                 Book your next flight today and experience seamless travel.
               </p>
             </div>
@@ -207,7 +207,7 @@ const HomePage = () => {
           <span className="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 text-sm font-medium rounded-full mb-4">
             Testimonials
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-black">
             What Our Customers Say
           </h2>
         </div>

@@ -278,3 +278,15 @@ textarea:focus {
 .dark .border-gray-200 {
   border-color: #334155 !important;
 }
+
+::selection {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+/* Dark mode selection */
+.dark ::selection,
+.dark-theme ::selection {
+  background-color: white;
+  color: var(--color-bg-primary);
+}

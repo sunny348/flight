@@ -74,7 +74,7 @@ const FlightSearchPage = () => {
   }) => (
     <div>
       {label && (
-        <div className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        <div className="text-sm font-medium text-gray-700 dark:text-black mb-1">
           {label}
         </div>
       )}
@@ -102,12 +102,12 @@ const FlightSearchPage = () => {
         <div className="absolute inset-0 bg-primary-900 opacity-20 z-0"></div>
         <div className="relative z-10 px-6 py-16 md:py-24 text-center">
           <SlideUp>
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4">
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-black mb-4">
               Find Your Perfect Flight
             </h1>
           </SlideUp>
           <FadeIn delay={0.2}>
-            <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-black/90 max-w-2xl mx-auto">
               Compare thousands of flights from trusted airlines around the
               world
             </p>
@@ -125,7 +125,7 @@ const FlightSearchPage = () => {
             <div>
               <label
                 htmlFor="origin"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                className="block text-sm font-medium text-gray-700 dark:text-black-300 mb-1">
                 From
               </label>
               <select
@@ -155,7 +155,7 @@ const FlightSearchPage = () => {
             <div>
               <label
                 htmlFor="destination"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                className="block text-sm font-medium text-gray-700 dark:text-black-300 mb-1">
                 To
               </label>
               <select
@@ -206,7 +206,7 @@ const FlightSearchPage = () => {
             <div>
               <label
                 htmlFor="departureTime"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                className="block text-sm font-medium text-gray-700 dark:text-black mb-1">
                 Departure Time
               </label>
               <div className="relative">
@@ -245,7 +245,7 @@ const FlightSearchPage = () => {
             <div>
               <label
                 htmlFor="adults"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                className="block text-sm font-medium text-gray-700 dark:text-black mb-1">
                 Passengers
               </label>
               <div className="relative">
@@ -273,14 +273,14 @@ const FlightSearchPage = () => {
           <div className="mb-6">
             <label
               htmlFor="cabinClass"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              className="block text-sm font-medium text-gray-700 dark:text-black mb-1">
               Cabin Class
             </label>
             <select
               id="cabinClass"
               value={cabinClass}
               onChange={(e) => setCabinClass(e.target.value)}
-              className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+              className="block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-primary-500 focus:border-primary-500 text-sm dark:bg-gray-800 dark:border-black-700 dark:text-white">
               <option value="ECONOMY">Economy</option>
               <option value="PREMIUM_ECONOMY">Premium Economy</option>
               <option value="BUSINESS">Business</option>
@@ -294,7 +294,8 @@ const FlightSearchPage = () => {
               variant="primary"
               size="lg"
               disabled={!isSearchFormValid}
-              icon={<IconSearch />}>
+              className= "text-black"
+                          icon={<IconSearch />}>
               Search Flights
             </Button>
           </div>
