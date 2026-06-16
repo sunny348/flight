@@ -48,6 +48,7 @@ This is a full-stack web application for searching and booking flights, built wi
 - Express.js
 - Prisma (ORM)
 - MySQL (Database)
+- Redis (flight-search result cache via `ioredis`)
 - `jsonwebtoken` (JWT handling)
 - `bcryptjs` (Password hashing)
 - `firebase-admin` (Backend Google Auth verification)
@@ -99,7 +100,7 @@ graph LR
 
 ```mermaid
 erDiagram
-    USER ||--o{ BOOKING : "places"
+    USER ||--o{ BOOKING : "places" 
     BOOKING ||--o{ BOOKED_FLIGHT : "contains"
     BOOKING ||--o{ PASSENGER : "includes"
 
@@ -147,7 +148,51 @@ erDiagram
     }
 ```
 
+## Running with Docker (recommended)
+
+The whole stack — **client + server + MySQL + Redis** — runs with Docker Compose.
+
+1.  **Create the server env file** (the server will not boot without it):
+
+    ```bash
+    cp server/.env.example server/.env
+    ```
+
+    Fill in real values — at minimum `JWT_SECRET` and `REFRESH_TOKEN_SECRET`
+    (the server calls `process.exit(1)` if these are missing). `DATABASE_URL`,
+    `REDIS_URL`, `CORS_ORIGIN`, and `REDIS_CACHE_TTL` are set automatically by
+    `docker-compose.yml` for the containerized stack.
+
+2.  **Build and start:**
+
+    ```bash
+    docker compose up --build
+    ```
+
+3.  **Access the app:**
+
+    - Client: `http://localhost:3000`
+    - API: `http://localhost:5000/api`
+    - MySQL: `localhost:3307` · Redis: `localhost:6379`
+
+### Flight-search caching (Redis)
+
+`GET /api/flights/search` uses a cache-aside strategy: identical searches are served
+from Redis for `REDIS_CACHE_TTL` seconds (default 300) instead of re-calling the
+Amadeus API. Redis is a non-fatal dependency — if it is down the endpoint still works,
+just without caching. Mock fallback results are intentionally not cached.
+
+```bash
+# verify caching
+docker compose exec redis redis-cli KEYS 'flights:*'
+docker compose exec redis redis-cli TTL <key>
+```
+
 ## Setup and Installation
+
+> The steps below are for running the services manually (without Docker). For most
+> cases prefer the **Running with Docker** section above. A running Redis instance is
+> required for caching (or leave `REDIS_URL` unset and the app runs without a cache).
 
 1.  **Clone the repository:**
 

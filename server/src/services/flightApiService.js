@@ -1,7 +1,27 @@
 import dotenv from "dotenv";
 import Amadeus from "amadeus"; // Import Amadeus SDK
+import { cacheGet, cacheSet } from "../utils/redisClient.js";
 
 dotenv.config();
+
+// TTL (seconds) for cached flight-search results.
+const CACHE_TTL = parseInt(process.env.REDIS_CACHE_TTL, 10) || 300;
+
+/**
+ * Builds a deterministic cache key for a flight search.
+ * @param {object} p - normalized search params
+ * @returns {string}
+ */
+const buildCacheKey = (p) =>
+  [
+    "flights:v1",
+    p.origin,
+    p.destination,
+    p.departureDate,
+    p.returnDate || "ow",
+    p.adults,
+    p.cabinClass || "ANY",
+  ].join(":");
 
 // Initialize Amadeus SDK client
 const amadeus = new Amadeus({
@@ -253,6 +273,22 @@ export const searchFlights = async (searchParams) => {
     maxResults = 50,
   } = searchParams;
 
+  // Cache-aside: serve identical searches from Redis when available.
+  const cacheKey = buildCacheKey({
+    origin,
+    destination,
+    departureDate,
+    returnDate,
+    adults,
+    cabinClass,
+  });
+  const cached = await cacheGet(cacheKey);
+  if (cached) {
+    console.log(`Cache HIT for ${cacheKey}.`);
+    return cached;
+  }
+  console.log(`Cache MISS for ${cacheKey}.`);
+
   console.log(
     "Attempting flight search with Amadeus example structure. Params:",
     searchParams
@@ -324,12 +360,22 @@ export const searchFlights = async (searchParams) => {
       console.log(
         `Found ${amadeusResponse.data.length} real flight offers from Amadeus.`
       );
-      return amadeusResponse; // Return the entire Amadeus SDK response object
+      // Normalize the SDK response to a plain, serializable shape so the cached
+      // payload is identical to what the controller sends today (res.json reads
+      // these same enumerable fields off the SDK object).
+      const result = {
+        meta: amadeusResponse.result?.meta,
+        data: amadeusResponse.data,
+        dictionaries: amadeusResponse.result?.dictionaries,
+      };
+      await cacheSet(cacheKey, result, CACHE_TTL);
+      return result;
     }
 
     console.warn(
       "No real flight offers found from Amadeus (Amadeus API returned zero offers). Generating mock data as fallback."
     );
+    // Mock data is randomized; intentionally not cached so users still get variety.
     return generateMockFlightData(searchParams); // Return the full mock data object
   } catch (error) {
     console.error(

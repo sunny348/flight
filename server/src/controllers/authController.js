@@ -36,12 +36,20 @@ if (admin.apps.length === 0) {
 /* ────────────────────────────────────────────────────────────
    2.  Cookie settings
    ──────────────────────────────────────────────────────────── */
+// const cookieOptions = {
+//   httpOnly : true,
+//   secure   : process.env.NODE_ENV === "production", // required with SameSite:none
+//   sameSite : "none",                                // allow cross‑origin on Vercel
+//   // ⚠ DO **NOT** add `domain` here – browsers reject “.vercel.app”
+// };
+
+// for running in local machine use this
 const cookieOptions = {
-  httpOnly : true,
-  secure   : process.env.NODE_ENV === "production", // required with SameSite:none
-  sameSite : "none",                                // allow cross‑origin on Vercel
-  // ⚠ DO **NOT** add `domain` here – browsers reject “.vercel.app”
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax", // or 'lax' depending on frontend and oauth redirects
 };
+
 
 const MAX_AGE          = +process.env.JWT_EXPIRES_IN_SECONDS       || 3600;    // 1 h
 const REFRESH_MAX_AGE  = +process.env.REFRESH_TOKEN_EXPIRES_IN_SECONDS || 604800; // 7 d
