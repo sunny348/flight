@@ -4,7 +4,7 @@
 ![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
 ![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Supertest-6E9F18)
 
-This is a full-stack web application for searching and booking flights, built with React, Node.js/Express, Prisma, and MySQL. It features user authentication, flight search via the Amadeus API (with mock data fallback), booking creation, viewing, cancellation, and editing capabilities.
+This is a full-stack web application for searching and booking flights, built with React, Node.js/Express, Prisma, and PostgreSQL. It features user authentication, flight search via the Amadeus API (with mock data fallback), booking creation, viewing, cancellation, and editing capabilities.
 
 The backend is hardened for production-style review: a shared Prisma client, Helmet security headers, per-IP rate limiting on auth routes, Zod request validation, a centralized error handler, and an automated test suite that runs in CI (see [Testing](#testing)).
 
@@ -53,7 +53,7 @@ The backend is hardened for production-style review: a shared Prisma client, Hel
 - Node.js
 - Express.js
 - Prisma (ORM)
-- MySQL (Database)
+- PostgreSQL (Database)
 - Redis (flight-search result cache via `ioredis`)
 - `jsonwebtoken` (JWT handling)
 - `bcryptjs` (Password hashing)
@@ -72,7 +72,7 @@ graph LR
     E -- Verify Token --> F(Google Auth);
     D -- JWT Verify --> C;
     C -- Database Queries --> G[Prisma ORM];
-    G -- SQL --> H[(MySQL Database)];
+    G -- SQL --> H[(PostgreSQL Database)];
     C -- Flight Search --> I[Amadeus API];
     C -- Generates --> J[Mock Flight Data];
 
@@ -156,7 +156,7 @@ erDiagram
 
 ## Running with Docker (recommended)
 
-The whole stack — **client + server + MySQL + Redis** — runs with Docker Compose.
+The whole stack — **client + server + PostgreSQL + Redis** — runs with Docker Compose.
 
 1.  **Create the server env file** (the server will not boot without it):
 
@@ -179,7 +179,7 @@ The whole stack — **client + server + MySQL + Redis** — runs with Docker Com
 
     - Client: `http://localhost:3000`
     - API: `http://localhost:5000/api`
-    - MySQL: `localhost:3307` · Redis: `localhost:6379`
+    - PostgreSQL: `localhost:5432` · Redis: `localhost:6379`
 
 ### Flight-search caching (Redis)
 
@@ -226,7 +226,7 @@ docker compose exec redis redis-cli TTL <key>
     - **Backend (`server/.env`):** Create a `.env` file in the `server` directory and add the following variables:
 
       ```env
-      DATABASE_URL="mysql://<user>:<password>@<host>:<port>/<database_name>"
+      DATABASE_URL="postgresql://<user>:<password>@<host>:<port>/<database_name>"
       JWT_SECRET="<your_strong_jwt_secret>"
       JWT_EXPIRES_IN="30d" # Or your preferred expiration
       COOKIE_EXPIRES_IN="30" # In days
@@ -246,7 +246,7 @@ docker compose exec redis redis-cli TTL <key>
       ```
 
       _Replace placeholders with your actual credentials._
-      _You need a MySQL database running and accessible._
+      _You need a PostgreSQL database running and accessible._
       _Obtain Amadeus API keys from their developer portal._
       _Generate a Firebase Admin SDK service account key from your Firebase project settings._
 
