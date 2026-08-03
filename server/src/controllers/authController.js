@@ -37,10 +37,15 @@ if (admin.apps.length === 0) {
 /* ────────────────────────────────────────────────────────────
    2.  Cookie settings
    ──────────────────────────────────────────────────────────── */
+// In production the client (Vercel) and API (Render) live on different
+// domains, so cookies must be SameSite=None to be sent cross-site — and
+// browsers only allow SameSite=None together with Secure (HTTPS). Locally we
+// stay on http://localhost, where Secure cookies are dropped, so use Lax.
+const isProd = process.env.NODE_ENV === "production";
 const cookieOptions = {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "lax", // or 'lax' depending on frontend and oauth redirects
+  secure: isProd,
+  sameSite: isProd ? "none" : "lax",
 };
 
 const MAX_AGE          = +process.env.JWT_EXPIRES_IN_SECONDS       || 3600;    // 1 h
