@@ -11,6 +11,12 @@ import errorHandler, { notFound } from "./middlewares/errorHandler.js";
 
 const app = express();
 
+// Trust the first proxy hop. In production the app runs behind a reverse proxy
+// (Render/Vercel/etc.) that sets X-Forwarded-For; without this, express-rate-limit
+// can't identify the real client IP and req.ip/secure cookies are unreliable.
+// Value `1` (not `true`) avoids trusting spoofable client-supplied headers.
+app.set("trust proxy", 1);
+
 // Security & infra middleware
 app.use(helmet()); // Sets secure HTTP response headers
 app.use(
