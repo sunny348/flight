@@ -31,9 +31,7 @@ const EditBookingPage = () => {
   const queryClient = useQueryClient();
 
   // Original booking data passed from the previous page
-  const [originalBooking, setOriginalBooking] = useState(
-    location.state?.bookingData || null
-  );
+  const [originalBooking] = useState(location.state?.bookingData || null);
 
   // States for new flight search
   const [origin, setOrigin] = useState("");

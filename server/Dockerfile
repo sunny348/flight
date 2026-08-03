@@ -1,4 +1,4 @@
-FROM node:18
+FROM node:20
 WORKDIR /app
 
 # 1) Copy pkg files AND prisma first (so postinstall can see schema)

@@ -1,9 +1,11 @@
 // controllers/authController.js
-import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import admin from "firebase-admin";
 import dotenv from "dotenv";
 
+import prisma from "../lib/prisma.js";
+import asyncHandler from "../utils/asyncHandler.js";
+import AppError from "../utils/AppError.js";
 import {
   generateToken,          // short‑lived access token
   generateRefreshToken,   // long‑lived refresh token
@@ -11,10 +13,9 @@ import {
 } from "../utils/jwtHelpers.js";
 
 dotenv.config();
-const prisma = new PrismaClient();
 
 /* ────────────────────────────────────────────────────────────
-   1.  Firebase Admin (Google login) – initialised once
+   1.  Firebase Admin (Google login) – initialised once
    ──────────────────────────────────────────────────────────── */
 if (admin.apps.length === 0) {
   admin.initializeApp({
@@ -36,23 +37,14 @@ if (admin.apps.length === 0) {
 /* ────────────────────────────────────────────────────────────
    2.  Cookie settings
    ──────────────────────────────────────────────────────────── */
-// const cookieOptions = {
-//   httpOnly : true,
-//   secure   : process.env.NODE_ENV === "production", // required with SameSite:none
-//   sameSite : "none",                                // allow cross‑origin on Vercel
-//   // ⚠ DO **NOT** add `domain` here – browsers reject “.vercel.app”
-// };
-
-// for running in local machine use this
 const cookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax", // or 'lax' depending on frontend and oauth redirects
 };
 
-
-const MAX_AGE          = +process.env.JWT_EXPIRES_IN_SECONDS       || 3600;    // 1 h
-const REFRESH_MAX_AGE  = +process.env.REFRESH_TOKEN_EXPIRES_IN_SECONDS || 604800; // 7 d
+const MAX_AGE          = +process.env.JWT_EXPIRES_IN_SECONDS       || 3600;    // 1 h
+const REFRESH_MAX_AGE  = +process.env.REFRESH_TOKEN_EXPIRES_IN_SECONDS || 604800; // 7 d
 
 /* helper: sets both cookies + returns them for frontend debugging */
 const issueTokens = (res, payload) => {
@@ -76,116 +68,103 @@ const issueTokens = (res, payload) => {
 
 /* ────────────────────────────────────────────────────────────
    3.  Auth End‑points
+   (input is validated by Zod middleware before reaching here)
    ──────────────────────────────────────────────────────────── */
-export const signup = async (req, res) => {
+export const signup = asyncHandler(async (req, res) => {
   const { email, password, name } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password are required" });
 
-  try {
-    if (await prisma.user.findUnique({ where: { email } }))
-      return res.status(409).json({ message: "User already exists" });
+  if (await prisma.user.findUnique({ where: { email } }))
+    throw new AppError(409, "User already exists");
 
-    const user = await prisma.user.create({
-      data: {
-        email,
-        name,
-        password: await bcrypt.hash(password, 12),
-      },
-    });
+  const user = await prisma.user.create({
+    data: {
+      email,
+      name,
+      password: await bcrypt.hash(password, 12),
+    },
+  });
 
-    const tokens = issueTokens(res, { id: user.id, email: user.email });
-    res.status(201).json({
-      user   : { id: user.id, email: user.email, name: user.name },
-      ...tokens,
-      message: "User registered successfully",
-    });
-  } catch (err) {
-    console.error("Signup error:", err);
-    res.status(500).json({ message: "Server error during registration" });
-  }
-};
+  const tokens = issueTokens(res, { id: user.id, email: user.email });
+  res.status(201).json({
+    user   : { id: user.id, email: user.email, name: user.name },
+    ...tokens,
+    message: "User registered successfully",
+  });
+});
 
-export const login = async (req, res) => {
+export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  if (!email || !password)
-    return res.status(400).json({ message: "Email and password are required" });
 
-  try {
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user || !(await bcrypt.compare(password, user.password)))
-      return res.status(401).json({ message: "Invalid credentials" });
+  const user = await prisma.user.findUnique({ where: { email } });
+  if (!user || !user.password || !(await bcrypt.compare(password, user.password)))
+    throw new AppError(401, "Invalid credentials");
 
-    const tokens = issueTokens(res, { id: user.id, email: user.email });
-    res.status(200).json({
-      user   : { id: user.id, email: user.email, name: user.name },
-      ...tokens,
-      message: "Login successful",
-    });
-  } catch (err) {
-    console.error("Login error:", err);
-    res.status(500).json({ message: "Server error during login" });
-  }
-};
+  const tokens = issueTokens(res, { id: user.id, email: user.email });
+  res.status(200).json({
+    user   : { id: user.id, email: user.email, name: user.name },
+    ...tokens,
+    message: "Login successful",
+  });
+});
 
-export const googleLogin = async (req, res) => {
+export const googleLogin = asyncHandler(async (req, res) => {
   const { idToken } = req.body;
-  if (!idToken) return res.status(400).json({ message: "ID token is required" });
 
+  let decoded;
   try {
-    const { uid, email, name } = await admin.auth().verifyIdToken(idToken);
-
-    /* find by Google UID or fallback to email */
-    let user = await prisma.user.findFirst({
-      where: { OR: [{ googleId: uid }, { email }] },
-    });
-
-    if (!user) {
-      user = await prisma.user.create({
-        data: { googleId: uid, email, name },
-      });
-    } else if (!user.googleId) {
-      user = await prisma.user.update({
-        where: { id: user.id },
-        data : { googleId: uid, name: user.name || name },
-      });
-    }
-
-    const tokens = issueTokens(res, { id: user.id, email: user.email });
-    res.status(200).json({
-      user: { id: user.id, email: user.email, name: user.name },
-      ...tokens,
-      message: "Google login successful",
-    });
-  } catch (err) {
-    console.error("Google login error:", err);
-    res.status(500).json({ message: "Server error during Google login" });
+    decoded = await admin.auth().verifyIdToken(idToken);
+  } catch {
+    throw new AppError(401, "Invalid or expired Google ID token");
   }
-};
+  const { uid, email, name } = decoded;
 
-export const refreshToken = async (req, res) => {
+  /* find by Google UID or fallback to email */
+  let user = await prisma.user.findFirst({
+    where: { OR: [{ googleId: uid }, { email }] },
+  });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: { googleId: uid, email, name },
+    });
+  } else if (!user.googleId) {
+    user = await prisma.user.update({
+      where: { id: user.id },
+      data : { googleId: uid, name: user.name || name },
+    });
+  }
+
+  const tokens = issueTokens(res, { id: user.id, email: user.email });
+  res.status(200).json({
+    user: { id: user.id, email: user.email, name: user.name },
+    ...tokens,
+    message: "Google login successful",
+  });
+});
+
+export const refreshToken = asyncHandler(async (req, res) => {
   const token = req.cookies.refreshToken;
-  if (!token) return res.status(401).json({ message: "No refresh token" });
+  if (!token) throw new AppError(401, "No refresh token");
 
-  try {
-    const payload = verifyRefreshToken(token);
-    const user    = await prisma.user.findUnique({ where: { id: payload.id } });
-    if (!user) throw new Error("User not found");
+  const payload = verifyRefreshToken(token);
+  const user = payload
+    ? await prisma.user.findUnique({ where: { id: payload.id } })
+    : null;
 
-    const accessToken = generateToken({ id: user.id, email: user.email });
-    res.cookie("accessToken", accessToken, {
-      ...cookieOptions,
-      maxAge: MAX_AGE * 1000,
-      path: "/",
-    });
-
-    res.status(200).json({ accessToken, message: "Access token refreshed" });
-  } catch (err) {
-    console.error("Refresh error:", err);
+  if (!user) {
     res.clearCookie("refreshToken", { ...cookieOptions, path: "/api/auth/refresh" });
-    res.status(403).json({ message: "Invalid or expired refresh token" });
+    throw new AppError(403, "Invalid or expired refresh token");
   }
-};
+
+  const accessToken = generateToken({ id: user.id, email: user.email });
+  res.cookie("accessToken", accessToken, {
+    ...cookieOptions,
+    maxAge: MAX_AGE * 1000,
+    path: "/",
+  });
+
+  res.status(200).json({ accessToken, message: "Access token refreshed" });
+});
 
 export const logout = (req, res) => {
   res.clearCookie("accessToken",  { ...cookieOptions, path: "/" });

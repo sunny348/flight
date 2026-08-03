@@ -1,6 +1,8 @@
 import * as flightApiService from "../services/flightApiService.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
-export const searchAvailableFlights = async (req, res) => {
+export const searchAvailableFlights = asyncHandler(async (req, res) => {
+  // Query params were validated + coerced by the flightSearchSchema middleware.
   const {
     origin,
     destination,
@@ -9,37 +11,22 @@ export const searchAvailableFlights = async (req, res) => {
     returnDate,
     adults,
     cabinClass,
-  } = req.query;
+  } = req.validatedQuery;
 
-  if (!origin || !destination || !departureDate || !adults) {
-    return res.status(400).json({
-      message:
-        "Missing required search parameters: origin, destination, departureDate, and adults are required.",
-    });
-  }
+  const searchParams = {
+    origin: origin.toUpperCase(),
+    destination: destination.toUpperCase(),
+    departureDate,
+    ...(departureTime && { departureTime }),
+    ...(returnDate && { returnDate }),
+    adults, // already a positive integer
+    ...(cabinClass && { cabinClass: cabinClass.toUpperCase() }),
+  };
 
-  try {
-    const searchParams = {
-      origin: origin.toUpperCase(),
-      destination: destination.toUpperCase(),
-      departureDate,
-      ...(departureTime && { departureTime }),
-      ...(returnDate && { returnDate }),
-      adults: parseInt(adults, 10),
-      ...(cabinClass && { cabinClass: cabinClass.toUpperCase() }),
-    };
+  const flights = await flightApiService.searchFlights(searchParams);
 
-    const flights = await flightApiService.searchFlights(searchParams);
-
-    if (!flights || flights.length === 0) {
-      return res.status(200).json([]);
-    }
-
-    res.status(200).json(flights);
-  } catch (error) {
-    console.error("Error in searchAvailableFlights controller:", error);
-    const errorMessage = error.message || "Error searching for flights.";
-    const statusCode = error.statusCode || 500;
-    res.status(statusCode).json({ message: errorMessage });
-  }
-};
+  // searchFlights returns either an array of offers or an Amadeus-shaped object
+  // ({ meta, data, dictionaries }). Normalize only the "no results" cases to [];
+  // otherwise pass the payload through unchanged.
+  res.status(200).json(!flights || flights.length === 0 ? [] : flights);
+});

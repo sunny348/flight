@@ -1,6 +1,12 @@
 # Flight Booking Full-Stack Application
 
+[![CI](https://github.com/sunny348/flight/actions/workflows/ci.yml/badge.svg)](https://github.com/sunny348/flight/actions/workflows/ci.yml)
+![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen)
+![Tests](https://img.shields.io/badge/tests-Vitest%20%2B%20Supertest-6E9F18)
+
 This is a full-stack web application for searching and booking flights, built with React, Node.js/Express, Prisma, and MySQL. It features user authentication, flight search via the Amadeus API (with mock data fallback), booking creation, viewing, cancellation, and editing capabilities.
+
+The backend is hardened for production-style review: a shared Prisma client, Helmet security headers, per-IP rate limiting on auth routes, Zod request validation, a centralized error handler, and an automated test suite that runs in CI (see [Testing](#testing)).
 
 ## Features
 
@@ -285,7 +291,43 @@ docker compose exec redis redis-cli TTL <key>
 
 7.  **Access the Application:** Open your browser and navigate to `http://localhost:5173` (or the port your client is running on).
 
+## Testing
+
+The server ships with a [Vitest](https://vitest.dev) + [Supertest](https://github.com/ladjs/supertest) suite. Prisma is deep-mocked, so the tests run **without a database, Redis, or any external service** — fast and deterministic, which is also why they run in CI on every push.
+
+```bash
+cd server
+npm test            # run once
+npm run test:watch  # watch mode
+npm run test:coverage
+```
+
+What's covered:
+
+- **Auth** (`tests/auth.test.js`) — signup success / duplicate (409) / validation (400); login invalid (401) / success (200).
+- **Bookings** (`tests/bookings.test.js`) — auth guard (401), create validation (400), create (201), list, cancel, and ownership checks (403).
+- **Flights** (`tests/flights.test.js`) — query validation (400), result passthrough, and param normalization.
+- **Unit** — `jwtHelpers` (sign/verify round-trips) and the Zod validators.
+
+### Continuous Integration
+
+`.github/workflows/ci.yml` runs on every push and pull request across Node 20 and 22:
+
+- **Server:** `npm ci` → `npm test`
+- **Client:** `npm ci` → `npm run lint` → `npm run build`
+
+### Reliability & Security hardening
+
+- **Single Prisma client** (`server/src/lib/prisma.js`) shared across the app instead of a new pool per module.
+- **Helmet** secure headers and **per-IP rate limiting** (`express-rate-limit`) on auth routes.
+- **Zod** schema validation at the route boundary (`server/src/validators`, `middlewares/validate.js`).
+- **Centralized error handling** (`middlewares/errorHandler.js`) with a consistent `{ status, message, errors? }` JSON envelope and a `/health` endpoint.
+
 ## API Endpoints (Brief Overview)
+
+**System:**
+
+- `GET /health` — liveness/readiness probe (`{ status: "ok", uptime }`)
 
 **Auth:**
 

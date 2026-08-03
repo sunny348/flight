@@ -5,16 +5,22 @@
   "main": "src/server.js",
   "type": "module",
   "scripts": {
-     "start": "node src/server.js",
+    "start": "node src/server.js",
     "dev": "nodemon src/server.js",
     "build": "npm install && npx prisma generate && npx prisma migrate deploy",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "supertest": "^7.2.2",
+    "vitest": "^4.1.10",
+    "vitest-mock-extended": "^5.1.1"
   },
   "dependencies": {
     "@prisma/client": "^6.7.0",
@@ -24,11 +30,14 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
+    "express-rate-limit": "^8.6.1",
     "firebase": "^11.7.1",
     "firebase-admin": "^13.3.0",
+    "helmet": "^8.3.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
     "prisma": "^6.7.0",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "zod": "^3.25.76"
   }
 }

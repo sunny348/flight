@@ -30,14 +30,10 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [currentBookingId, setCurrentBookingId] = useState(null); // To store bookingId for payment verification
+  const [, setCurrentBookingId] = useState(null); // Stores bookingId for payment verification
 
   // Retrieve flightOffer and adults count from location state
-  const {
-    selectedOffer: flightOffer,
-    searchParams,
-    dictionaries,
-  } = location.state || {};
+  const { selectedOffer: flightOffer, searchParams } = location.state || {};
   const numAdults = searchParams?.adults || 1;
 
   const initialFirstName = user?.name?.split(" ")[0] || "";
